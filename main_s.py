@@ -30,14 +30,14 @@ class Server:
         except socket.error as e:
             print(str(e))
         print('Socket is listening..')
-        self.ServerSideSocket.listen(1)
+        self.ServerSideSocket.listen(4)
         for i in range(self.board_size):
             self.board.append([])
             for j in range(self.board_size):
                 self.board[i].append(0)
         random.shuffle(self.color_list)
         Client_list = []
-        while self.ThreadCount < 1:
+        while self.ThreadCount < 4:
             Client, address = self.ServerSideSocket.accept()
             Client_list.append(Client)
             start_new_thread(self.gamestart, (Client_list[self.ThreadCount], self.color_list[self.ThreadCount], self.ThreadCount))
