@@ -105,9 +105,11 @@ class Client:
             pos = pygame.mouse.get_pos()
             displaySuccess, coord, displayedPos = game.displayChess(screen, [pos[1], pos[0]], pygame.Color(self.color))
             self.getPosition = displaySuccess
-            self.newPositionX, self.newPositionY = coord[0], coord[1]
-            self.actualPositionX, self.actualPositionY = displayedPos[0], displayedPos[1]
-            self.ClientMultiSocket.send(str.encode(f"{str(self.newPositionX)},{str(self.newPositionY)},{str(self.actualPositionX)},{str(self.actualPositionY)}")) # we need to get newposition from JC
+            print(self.getPosition)
+            if self.getPosition:
+                self.newPositionX, self.newPositionY = coord[0], coord[1]
+                self.actualPositionX, self.actualPositionY = displayedPos[0], displayedPos[1]
+                self.ClientMultiSocket.send(str.encode(f"{str(self.newPositionX)},{str(self.newPositionY)},{str(self.actualPositionX)},{str(self.actualPositionY)}")) # we need to get newposition from JC
         except Exception as e:
             print(e)
             pass
@@ -115,13 +117,12 @@ class Client:
     def otherPlayerProcess(self, game, screen):
         try:
             # Display the other 3 players' status
+            print(f"placing current player's chess!")
             step = self.ClientMultiSocket.recv(1024).decode("utf-8")
-            print(step)
             pos, self.newColor = [int(step.split(",")[0]), int(step.split(",")[1])], step.split(",")[2]
-            print(pos, self.newColor)
-            print(pygame.Color(self.newColor))
             displaySuccess, _, _ = game.displayChess(screen, [pos[1], pos[0]], pygame.Color(self.newColor))
-            print(displaySuccess)
+            print("Display result:", displaySuccess)
+            return displaySuccess
         except Exception as e:
             print(e)
             pass
@@ -141,22 +142,20 @@ def main():
         client.getPosition = False
         while len(message) != 0:
             if message == "your_turn":
-                placed = False
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             print("Chess placed")
                             client.currentPlayerProcess(game, screen)
                             print(f"Get position: {client.getPosition}")
-                            placed = True
-                            break   
-                if placed:
-                    break
+                            if client.getPosition:
+                                break
+                            else:
+                                continue
             elif message == "not_your_turn":
-                print(f"placing current player's chess!")
                 client.otherPlayerProcess(game, screen)
                 print("Placing done!")
-                break
+                
             elif message == "you_win":
                 # render win in this line
                 youWin = pygame.font.SysFont(None, 60)

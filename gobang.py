@@ -131,7 +131,6 @@ class Board:
         # Adjust location if you put the chess outside the board
         print(pos)
         if pos[0] >= 85 and pos [0] < 535 and pos[1] >= 85 and pos[1] < 535:
-            print("In")
             posList = [pos[0], pos[1]]
             coord, displayedPosList = self.posAdjustment(posList)
             displayedPos = (displayedPosList[1], displayedPosList[0])
@@ -140,7 +139,6 @@ class Board:
             # Coord argument is a tuple of (x, y)
             # print(newChess.centerCoord)
             if self.court[coord[0]][coord[1]] == 0:
-                print("place")
                 self.court[coord[0]][coord[1]] = 1
                 newChess = Chess(gameScreen, color, displayedPos)
                 pygame.draw.circle(newChess.gameScreen, newChess.color, newChess.centerCoord, newChess.radius)
