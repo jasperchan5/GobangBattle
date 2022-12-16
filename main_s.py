@@ -12,7 +12,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 class Server:
     def __init__(self, admin, screen):
         self.ServerSideSocket = socket.socket()
-        self.host = '54.174.225.113'
+        self.host = '172.20.10.4'
         self.port = 2004
         self.ThreadCount = 0
         self.nowPlayer = 0
