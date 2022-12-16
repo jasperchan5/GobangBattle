@@ -10,8 +10,8 @@ import random
 class Client:
     def __init__(self):
         self.ClientMultiSocket = socket.socket()
-        self.host = '127.0.0.1'
-        self.port = 2004
+        self.host = '172.20.10.4'
+        self.port = 2003
         print('Waiting for connection response')
         try:
             self.ClientMultiSocket.connect((self.host, self.port))
@@ -27,7 +27,7 @@ class Client:
         self.newColor = ""
         self.getPosition = False
         self.someoneWin = False
-    
+
     def currentPlayerProcess(self, game, screen):
         try:
             pos = pygame.mouse.get_pos()
@@ -41,7 +41,7 @@ class Client:
         except Exception as e:
             print(e)
             pass
-        
+
     def otherPlayerProcess(self, game, screen):
         try:
             # Display the other 3 players' status
@@ -55,7 +55,7 @@ class Client:
         except Exception as e:
             print(e)
             pass
-        
+
     def close(self):
         self.ClientMultiSocket.close()
 
@@ -92,7 +92,7 @@ def main():
                 else:
                     print("Other player placing not success")
                     continue
-                
+
             elif message == "you_win":
                 # render win in this line
                 youWin = pygame.font.SysFont(None, 60)
@@ -106,11 +106,11 @@ def main():
                 renderedYouLose = youLose.render("Gobang", True, (0, 0, 0))
                 screen.blit(renderedYouLose,(10, 10))
                 client.someoneWin = True
-            
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-                
+
     client.close()
 main()
