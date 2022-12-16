@@ -90,44 +90,40 @@ class Client:
             print("Client connected successfully!")
         except socket.error as e:
             print(str(e))
-        self.color = ""
+        self.playerID = self.ClientMultiSocket.recv(1024).decode("utf-8")
+        self.color = self.ClientMultiSocket.recv(1024).decode("utf-8")
         self.newPositionX = 0
         self.newPositionY = 0
+        self.actualPositionX = 0
+        self.actualPositionY = 0
         self.newColor = ""
         self.getPosition = False
-        
-    def startClient(self):
-        self.color = self.ClientMultiSocket.recv(1024).decode("utf-8")
+        self.someoneWin = False
     
-    def gameProcess(self, gameScreen):
+    def currentPlayerProcess(self, game, screen):
         try:
-            message = self.ClientMultiSocket.recv(1024).decode("utf-8")
-            if message == "your_turn":
-                while not self.getPosition:
-                    continue
-                # Send chess displayed position
-                self.ClientMultiSocket.send(str.encode([str(self.newPositionX), str(self.newPositionY)])) # we need to get newposition from JC
-
-            elif message == "not_your_turn":
-                # Display the other 3 players' status
-                step = self.ClientMultiSocket.recv(1024).decode("utf-8")
-                newChess = Chess(gameScreen, step[2], (step[0], step[1]))
-                pygame.draw.circle(newChess.gameScreen, newChess.color, newChess.centerCoord, newChess.radius)
-                pygame.display.update()
-            elif message == "you_win":
-                # render win in this line
-                youWin = pygame.font.SysFont(None, 60)
-                renderedYouWin = youWin.render("Gobang", True, (0, 0, 0))
-                gameScreen.blit(renderedYouWin,(10, 10))
-                pass
-
-            elif message == "you_lose":
-                # render lose in this line
-                youLose = pygame.font.SysFont(None, 60)
-                renderedYouLose = youLose.render("Gobang", True, (0, 0, 0))
-                gameScreen.blit(renderedYouLose,(10, 10))
-                pass
-        except:
+            pos = pygame.mouse.get_pos()
+            displaySuccess, coord, displayedPos = game.displayChess(screen, [pos[1], pos[0]], pygame.Color(self.color))
+            self.getPosition = displaySuccess
+            self.newPositionX, self.newPositionY = coord[0], coord[1]
+            self.actualPositionX, self.actualPositionY = displayedPos[0], displayedPos[1]
+            self.ClientMultiSocket.send(str.encode(f"{str(self.newPositionX)},{str(self.newPositionY)},{str(self.actualPositionX)},{str(self.actualPositionY)}")) # we need to get newposition from JC
+        except Exception as e:
+            print(e)
+            pass
+        
+    def otherPlayerProcess(self, game, screen):
+        try:
+            # Display the other 3 players' status
+            step = self.ClientMultiSocket.recv(1024).decode("utf-8")
+            print(step)
+            pos, self.newColor = [int(step.split(",")[0]), int(step.split(",")[1])], step.split(",")[2]
+            print(pos, self.newColor)
+            print(pygame.Color(self.newColor))
+            displaySuccess, _, _ = game.displayChess(screen, [pos[1], pos[0]], pygame.Color(self.newColor))
+            print(displaySuccess)
+        except Exception as e:
+            print(e)
             pass
         
     def close(self):
@@ -135,33 +131,50 @@ class Client:
 
 
 def main():
-    game = Board()
+    client = Client()
+    game = Board(client.playerID)
     resolution = (620, 620)
     screen = game.initGame(resolution)
-    pos = (100, 100)
-    botPos = (100, 100)
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    client = Client()
-    # server = Server()
-    # server.startGame()
-    time.sleep(3)
-    while True:
+    while not client.someoneWin:
+        message = client.ClientMultiSocket.recv(1024).decode("utf-8")
+        print(f"This is player {client.playerID}, message: {message}")
+        client.getPosition = False
+        while len(message) != 0:
+            if message == "your_turn":
+                placed = False
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            print("Chess placed")
+                            client.currentPlayerProcess(game, screen)
+                            print(f"Get position: {client.getPosition}")
+                            placed = True
+                            break   
+                if placed:
+                    break
+            elif message == "not_your_turn":
+                print(f"placing current player's chess!")
+                client.otherPlayerProcess(game, screen)
+                print("Placing done!")
+                break
+            elif message == "you_win":
+                # render win in this line
+                youWin = pygame.font.SysFont(None, 60)
+                renderedYouWin = youWin.render("Gobang", True, (0, 0, 0))
+                screen.blit(renderedYouWin,(10, 10))
+                client.someoneWin = True
+
+            elif message == "you_lose":
+                # render lose in this line
+                youLose = pygame.font.SysFont(None, 60)
+                renderedYouLose = youLose.render("Gobang", True, (0, 0, 0))
+                screen.blit(renderedYouLose,(10, 10))
+                client.someoneWin = True
+            
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    client.getPosition = False
-                    pos = pygame.mouse.get_pos()
-                    displaySuccess, coord = game.displayChess(screen, pos, black)
-                    client.getPosition = displaySuccess
-                    client.newPositionX, client.newPositionY = coord[1], coord[0]
-                    client.gameProcess(screen)
-                    # Use "your turn", "not your turn" to determine current player
-                    time.sleep(3)
-            elif event.type == QUIT:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
                 
     client.close()
-    server.close()
 main()

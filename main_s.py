@@ -1,6 +1,6 @@
 import pygame,sys
 from pygame.locals import QUIT
-from gobang import AdminPerspect, Board
+from gobang import Admin, Chess
 import socket
 from _thread import *
 import time
@@ -8,12 +8,12 @@ import random
 
 # Initialize a server
 class Server:
-    def __init__(self):
+    def __init__(self, admin, screen):
         self.ServerSideSocket = socket.socket()
         self.host = '127.0.0.1'
         self.port = 2004
         self.ThreadCount = 0
-        self.nowPlayer = -1
+        self.nowPlayer = 0
         self.Finish = False
         self.Winner = -1
         self.board_size = 15 
@@ -22,6 +22,10 @@ class Server:
         self.newPositionY = -1
         self.newcolor = ""
         self.color_list = ["#000000", "#000080", "#008000", "#ff0000", "#800080", "#00ff00", "#00ffff"]
+        self.totalPlayerCnt = 2
+        self.game = admin
+        self.screen = screen
+        self.chessPlaced = False
         
     def initGame(self):
         try:
@@ -30,50 +34,75 @@ class Server:
         except socket.error as e:
             print(str(e))
         print('Socket is listening..')
-        self.ServerSideSocket.listen(4)
+        self.ServerSideSocket.listen(self.totalPlayerCnt)
         for i in range(self.board_size):
             self.board.append([])
             for j in range(self.board_size):
                 self.board[i].append(0)
+        print("Board generated")
         random.shuffle(self.color_list)
         Client_list = []
-        while self.ThreadCount < 4:
+        while self.ThreadCount < self.totalPlayerCnt:
             Client, address = self.ServerSideSocket.accept()
             Client_list.append(Client)
-            start_new_thread(self.gamestart, (Client_list[self.ThreadCount], self.color_list[self.ThreadCount], self.ThreadCount))
             self.ThreadCount += 1 
             print(self.ThreadCount)   
+        for t, client in enumerate(Client_list):
+            start_new_thread(self.gamestart, (client, self.color_list[t], t))
 
-    def send_color(self, connection, color):
-        connection.send(str.encode(color))
-        
     def gamestart(self, connection, color, id):
         # connection.send(str.encode('Server is working:'))
         # print(connection)
-        self.send_color(connection, color)
+        connection.send(str.encode(str(id+1)))
+        connection.send(str.encode(color))
+        
         while not self.Finish:
-            if id == self.nowPlayer:
-                # ask player to play
-                # newposition = get the position the player played
-                connection.send(str.encode("your_turn"))
-                try:
-                    newPosition = connection.recv(1024).decode("utf-8")
-                    self.newPositionX = int(newPosition[0])
-                    self.newPositionY = int(newPosition[1])
-                    newcolor = color
-                except:
-                    continue
+            if self.Winner == -1:
+                if id == self.nowPlayer:
+                    print(f"Thread{id}. It's player {id+1}'s turn!")
+                    # ask player to play
+                    # newposition = get the position the player played
+                    connection.send(str.encode("your_turn"))
+                    try:
+                        newPosition = connection.recv(1024).decode("utf-8")                   
+                        self.newPositionX, self.newPositionY = int(newPosition.split(",")[0]), int(newPosition.split(",")[1])
+                        self.actualPositionX, self.actualPositionY = int(newPosition.split(",")[2]), int(newPosition.split(",")[3])
+                        self.newcolor = color
+                        
+                        self.board[self.newPositionX][self.newPositionY] = 1
+                        newChess = Chess(self.screen, color, (self.actualPositionX, self.actualPositionY))
+                        
+                        pygame.draw.circle(newChess.gameScreen, newChess.color, newChess.centerCoord, newChess.radius)
+                        pygame.display.update()
+                        if self.game.endGame():
+                            print(f"Player {id} wins!")
+                            self.Winner = id
+                            continue
+                        else:
+                            self.chessPlaced = True
+                            self.nowPlayer = (self.nowPlayer + 1) % self.totalPlayerCnt
+                            time.sleep(3)
+                            self.newPositionX, self.newPositionY = -1, -1
+                    except:
+                        print("No new position received")
+                        continue
+                else:
+                    connection.send(str.encode("not_your_turn"))
+                    while self.newPositionX == -1 and self.newPositionY == -1:
+                        continue
+                    while self.board[self.newPositionX][self.newPositionY] == 0:
+                        continue
+                    time.sleep(3)
+                    connection.send(str.encode(f"{str(self.actualPositionX)},{str(self.actualPositionY)},{self.newcolor}"))
             else:
-                connection.send(str.encode("not_your_turn"))
-                while self.newPositionX == -1 and self.newPositionY == -1:
-                    continue
-                while self.board[self.newPositionX][self.newPositionY]:
-                    continue
-                connection.send(str.encode([str(self.newPositionX), str(self.newPositionY), newcolor]))
-        if id == self.Winner:
-            connection.send(str.encode("you_win"))
-        else:
-            connection.send(str.encode("you_lose"))
+                if id == self.Winner:
+                    print("you win!")
+                    connection.send(str.encode("you_win"))
+                    break
+                else:
+                    print("you lose!")
+                    connection.send(str.encode("you_lose"))
+                    break
         time.sleep(10)
         connection.close()
 
@@ -133,42 +162,17 @@ class Server:
 
 
 def main():
-    server = Server()
-    server.initGame()
-    print("start")
-    admin = Board()
+    admin = Admin()
     resolution = (620, 620)
-    black = (0, 0, 0)
-    # client = Client()
     screen = admin.initGame(resolution)
-    print("game inited")
-    time.sleep(3)
-    print(server.Finish)
+    server = Server(admin, screen)
+    server.initGame()
     while not server.Finish:
-        print("AA")
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    # Use "your turn", "not your turn" to determine current player
-                    pos = pygame.mouse.get_pos()
-                    while server.newPositionX == -1 and server.newPositionY == -1:
-                        continue
-                    while server.board[server.newPositionX][server.newPositionY]:
-                        continue
-                    displaySuccess, coord = admin.displayChess(screen, pos, black)
-                    time.sleep(3)
-                    if displaySuccess:
-                        server.board[coord[1]][coord[0]] = True
-            elif event.type == QUIT:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        server.nowPlayer = (server.nowPlayer + 1) % 4
-        print("nowPlayer=", server.nowPlayer, "\n")
-        if server.Finish:
-            break
                 
     # client.close()
     server.close()
-print("AAA")
 main()
-print("ASAS")
