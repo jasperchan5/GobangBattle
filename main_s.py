@@ -5,6 +5,8 @@ import socket
 from _thread import *
 import time
 import random
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 # Initialize a server
 class Server:
