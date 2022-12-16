@@ -5,12 +5,14 @@ import socket
 from _thread import *
 import time
 import random
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 # Initialize a server
 class Server:
     def __init__(self, admin, screen):
         self.ServerSideSocket = socket.socket()
-        self.host = '127.0.0.1'
+        self.host = '192.168.0.88'
         self.port = 2004
         self.ThreadCount = 0
         self.nowPlayer = 0

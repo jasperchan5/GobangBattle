@@ -10,7 +10,7 @@ import random
 class Client:
     def __init__(self):
         self.ClientMultiSocket = socket.socket()
-        self.host = '127.0.0.1'
+        self.host = '192.168.0.88'
         self.port = 2004
         print('Waiting for connection response')
         try:
