@@ -126,6 +126,10 @@ class Board:
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), pygame.Rect(100, 100+30*i, 422, 2))
         pygame.display.update()
         return gameScreen
+
+    def nonPlayerVeil(self, gameScreen, color):
+        pygame.draw.rect(gameScreen, color, (611,473,100,50))
+        pygame.display.update()
     
     def displayChess(self, gameScreen, pos, color):
         # Adjust location if you put the chess outside the board
