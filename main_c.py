@@ -62,7 +62,7 @@ class Client:
 
 def main():
     client = Client()
-    game = Board(client.playerID)
+    game = Board(client.playerID, client.color)
     resolution = (620, 620)
     screen = game.initGame(resolution)
     while not client.someoneWin:
@@ -71,6 +71,7 @@ def main():
         client.getPosition = False
         while len(message) != 0:
             if message == "your_turn":
+                game.nowPlayerGlow(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
@@ -83,6 +84,7 @@ def main():
                             else:
                                 continue
             elif message == "not_your_turn":
+                game.otherPlayerNoGlow(screen)
                 displaySuccess = client.otherPlayerProcess(game, screen)
                 print("Placing done!")
                 if displaySuccess:
@@ -111,6 +113,5 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
     client.close()
 main()

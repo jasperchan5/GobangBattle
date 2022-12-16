@@ -5,12 +5,10 @@ import socket
 from _thread import *
 import time
 import random
-import os
-os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 # Initialize a server
 class Server:
-    def __init__(self, admin, screen):
+    def __init__(self, admin, screen, playerCnt, color_list):
         self.ServerSideSocket = socket.socket()
         self.host = '127.0.0.1'
         self.port = 2003
@@ -23,8 +21,8 @@ class Server:
         self.newPositionX = -1
         self.newPositionY = -1
         self.newcolor = ""
-        self.color_list = ["#000000", "#000080", "#008000", "#ff0000", "#800080", "#00ff00", "#00ffff"]
-        self.totalPlayerCnt = 2
+        self.color_list = color_list
+        self.totalPlayerCnt = playerCnt
         self.game = admin
         self.screen = screen
         self.chessPlaced = False
@@ -44,7 +42,6 @@ class Server:
             for j in range(self.board_size):
                 self.board[i].append(0)
         print("Board generated")
-        random.shuffle(self.color_list)
         Client_list = []
         while self.ThreadCount < self.totalPlayerCnt:
             Client, address = self.ServerSideSocket.accept()
@@ -84,15 +81,14 @@ class Server:
                     self.newcolor = color
 
                     self.board[self.newPositionX][self.newPositionY] = 1
+                    self.game.board[self.newPositionX][self.newPositionY] = self.newcolor
                     newChess = Chess(self.screen, color, (self.actualPositionX, self.actualPositionY))
-
                     pygame.draw.circle(newChess.gameScreen, newChess.color, newChess.centerCoord, newChess.radius)
                     pygame.display.update()
                     if self.game.endGame():
                         print(f"Player {id} wins!")
                         self.Winner = id
                         self.Finish = True
-                        continue
                     else:
                         self.chessPlaced = True
                         self.nowPlayer = (self.nowPlayer + 1) % self.totalPlayerCnt
@@ -128,17 +124,20 @@ class Server:
         self.ServerSideSocket.close()
 
 def main():
-    admin = Admin()
+    playerCnt = 4
+    color_list = [
+        "#85332d", "#ff7b24", "#ff201c", "#f0ec1f", "#63cc43", "#357bb8", "#35b8ab", "#9530c7", "#cf19b6", "#cf1958"
+    ]
+    random.shuffle(color_list)
+    admin = Admin(playerCnt, color_list)
     resolution = (620, 620)
     screen = admin.initGame(resolution)
-    server = Server(admin, screen)
+    server = Server(admin, screen, playerCnt, color_list)
     server.initGame()
     while not server.Finish:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
-    # client.close()
     server.close()
 main()
