@@ -12,7 +12,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 class Server:
     def __init__(self, admin, screen):
         self.ServerSideSocket = socket.socket()
-        self.host = '172.20.10.4'
+        self.host = '127.0.0.1'
         self.port = 2003
         self.ThreadCount = 0
         self.nowPlayer = 0
@@ -24,7 +24,7 @@ class Server:
         self.newPositionY = -1
         self.newcolor = ""
         self.color_list = ["#000000", "#000080", "#008000", "#ff0000", "#800080", "#00ff00", "#00ffff"]
-        self.totalPlayerCnt = 4
+        self.totalPlayerCnt = 2
         self.game = admin
         self.screen = screen
         self.chessPlaced = False
@@ -63,7 +63,7 @@ class Server:
         connection.send(str.encode(color))
 
         while not self.Finish:
-            if self.begin < 4:
+            if self.begin < self.totalPlayerCnt:
                 time.sleep(3)
                 self.begin += 1
             #time.sleep(2)
