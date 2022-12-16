@@ -22,7 +22,7 @@ class Server:
         self.newPositionY = -1
         self.newcolor = ""
         self.color_list = ["#000000", "#000080", "#008000", "#ff0000", "#800080", "#00ff00", "#00ffff"]
-        self.totalPlayerCnt = 2
+        self.totalPlayerCnt = 4
         self.game = admin
         self.screen = screen
         self.chessPlaced = False
