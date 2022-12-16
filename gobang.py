@@ -129,7 +129,6 @@ class Board:
     
     def displayChess(self, gameScreen, pos, color):
         # Adjust location if you put the chess outside the board
-        print(pos)
         if pos[0] >= 85 and pos [0] < 535 and pos[1] >= 85 and pos[1] < 535:
             posList = [pos[0], pos[1]]
             coord, displayedPosList = self.posAdjustment(posList)

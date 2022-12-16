@@ -49,7 +49,7 @@ class Server:
             print(self.ThreadCount)   
         for t, client in enumerate(Client_list):
             start_new_thread(self.gamestart, (client, self.color_list[t], t))
-            time.sleep(0.5)
+            
 
     def gamestart(self, connection, color, id):
         # connection.send(str.encode('Server is working:'))
@@ -89,12 +89,16 @@ class Server:
                     continue
             else:
                 connection.send(str.encode("not_your_turn"))
+                print(f"Thread{id} A:", self.newPositionX, self.newPositionX)
                 while self.newPositionX == -1 and self.newPositionY == -1:
                     continue
+                print(f"Thread{id} B:", self.newPositionX, self.newPositionX)
                 # while self.board[self.newPositionX][self.newPositionY] == 0:
                 #     continue
                 time.sleep(1)
+                print("Send position!")
                 connection.send(str.encode(f"{str(self.actualPositionX)},{str(self.actualPositionY)},{self.newcolor}"))
+                time.sleep(3)
         if id == self.Winner:
             print("you win!")
             connection.send(str.encode("you_win"))
@@ -106,58 +110,6 @@ class Server:
 
     def close(self):
         self.ServerSideSocket.close()
-
-# # Initialize clients
-# class Client:
-#     def __init__(self):
-#         self.ClientMultiSocket = socket.socket()
-#         self.host = '127.0.0.1'
-#         self.port = 2004
-#         print('Waiting for connection response')
-#         try:
-#             self.ClientMultiSocket.connect((self.host, self.port))
-#         except socket.error as e:
-#             print(str(e))
-#         self.color = ""
-#         self.newPositionX = 0
-#         self.newPositionY = 0
-#         self.newColor = ""
-#         self.getPosition = False
-        
-#     def startClient(self):
-#         self.color = self.ClientMultiSocket.recv(1024).decode("utf-8")
-    
-#     def gameProcess(self):
-#         while True:
-#             try:
-#                 message = self.ClientMultiSocket.recv(1024).decode("utf-8")
-#                 if message == "your_turn":
-#                     while not self.getPosition:
-#                         continue
-#                     # Send chess displayed position
-#                     # newPositionX = int(xx)
-#                     # newPositionY = int(yy) 
-#                     self.ClientMultiSocket.send(str.encode([str(newPositionX), str(newPositionY)])) # we need to get newposition from JC
-
-#                 elif message == "not_your_turn":
-#                     # Display the other 3 players' status
-#                     step = self.ClientMultiSocket.recv(1024).decode("utf-8")
-#                     newPositionX = step[0]
-#                     newPositionY = step[1]
-#                     self.newColor = step[2]
-#                 elif message == "you_win":
-#                     # render win in this line
-#                     break
-
-#                 elif message == "you_lose":
-#                     # render lose in this line
-#                     break
-#             except:
-#                 continue
-        
-#     def close(self):
-#         self.ClientMultiSocket.close()
-
 
 def main():
     admin = Admin()
