@@ -65,8 +65,8 @@ class Server:
                 self.begin += 1
             #time.sleep(2)
             if id == self.nowPlayer:
-
                 print(f"Thread{id}. It's player {id+1}'s turn!")
+                self.game.drawPlayerStatus(self.screen, self.nowPlayer)
                 # ask player to play
                 # newposition = get the position the player played
 
@@ -87,6 +87,7 @@ class Server:
                     pygame.display.update()
                     if self.game.endGame():
                         print(f"Player {id} wins!")
+                        time.sleep(3)
                         self.Winner = id
                         self.Finish = True
                     else:
@@ -112,16 +113,14 @@ class Server:
                 connection.send(str.encode(f"{str(self.actualPositionX)},{str(self.actualPositionY)},{self.newcolor}"))
                 time.sleep(3)
         if id == self.Winner:
+            time.sleep(2)
             print("you win!")
             connection.send(str.encode("you_win"))
+            self.game.drawWhoWins(self.screen, self.Winner+1)
         else:
+            time.sleep(2)
             print("you lose!")
             connection.send(str.encode("you_lose"))
-        time.sleep(10)
-        connection.close()
-
-    def close(self):
-        self.ServerSideSocket.close()
 
 def main():
     playerCnt = 4
@@ -139,5 +138,10 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-    server.close()
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+        continue
 main()

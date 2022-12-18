@@ -97,21 +97,24 @@ def main():
 
             elif message == "you_win":
                 # render win in this line
-                youWin = pygame.font.SysFont(None, 60)
-                renderedYouWin = youWin.render("Gobang", True, (0, 0, 0))
-                screen.blit(renderedYouWin,(10, 10))
+                game.drawYouWin(screen)
                 client.someoneWin = True
+                break
 
             elif message == "you_lose":
                 # render lose in this line
-                youLose = pygame.font.SysFont(None, 60)
-                renderedYouLose = youLose.render("Gobang", True, (0, 0, 0))
-                screen.blit(renderedYouLose,(10, 10))
+                game.drawYouLose(screen)
                 client.someoneWin = True
+                break
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-    client.close()
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+        continue
 main()

@@ -1,6 +1,6 @@
 import numpy as np
 import random as rd
-import math
+import time
 import pygame
 
 class Chess:
@@ -28,26 +28,66 @@ class Admin:
         gameScreen.fill(self.backgroundColor)
 
         # Create title
-        for e, i in enumerate(range(0, 140*(self.playerCnt-1)+1, 140)):
-            colorWidth, colorHeight = 36, 36
-            tagWidth, tagHeight = 92, 36
-            colorRenderX, colorRenderY = 32+i, 24
-            tagRenderX, tagRenderY = colorRenderX+colorWidth, colorRenderY
-            tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
-            pygame.draw.rect(gameScreen, self.colorList[e], (colorRenderX, colorRenderY, colorWidth, colorHeight))
-            pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
-            title = pygame.font.SysFont(None, 24)
-            renderedTitle = title.render(f"Player {e+1}", True, (255, 255, 255))
-            text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
-            gameScreen.blit(renderedTitle, text_rect)
+        self.drawPlayerStatus(gameScreen, 0)
         self.drawBoard(gameScreen)
         return gameScreen
+    
+    def drawPlayerStatus(self,  gameScreen, nowPlayerID):
+        for e, i in enumerate(range(0, 140*(self.playerCnt-1)+1, 140)):
+            if e == nowPlayerID:
+                self.nowPlayerGlow(gameScreen, self.colorList[e], e+1, i)
+            else:
+                self.otherPlayerNoGlow(gameScreen, self.colorList[e], e+1, i)
+        pygame.display.update()
+        
+    def nowPlayerGlow(self, gameScreen, thisPlayerColor, thisPlayerID, offset):
+        colorWidth, colorHeight = 128, 36
+        tagWidth, tagHeight = 82, 26
+        colorRenderX, colorRenderY = 32+offset, 24
+        tagRenderX, tagRenderY = colorRenderX+23, colorRenderY+5
+        tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
+        pygame.draw.rect(gameScreen, thisPlayerColor, (colorRenderX, colorRenderY, colorWidth, colorHeight))
+        pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
+        title = pygame.font.SysFont(None, 24)
+        renderedTitle = title.render(f"Player {thisPlayerID}", True, (255, 255, 255))
+        text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
+        gameScreen.blit(renderedTitle, text_rect)
+        pygame.display.update()
+    
+    def otherPlayerNoGlow(self, gameScreen, thisPlayerColor, thisPlayerID, offset):
+        colorWidth, colorHeight = 12, 36
+        tagWidth, tagHeight = 116, 36
+        colorRenderX, colorRenderY = 32+offset, 24
+        tagRenderX, tagRenderY = colorRenderX+colorWidth, colorRenderY
+        tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
+        pygame.draw.rect(gameScreen, thisPlayerColor, (colorRenderX, colorRenderY, colorWidth, colorHeight))
+        pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
+        title = pygame.font.SysFont(None, 24)
+        renderedTitle = title.render(f"Player {thisPlayerID}", True, (255, 255, 255))
+        text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
+        gameScreen.blit(renderedTitle, text_rect)
+        pygame.display.update()
+
 
     def drawBoard(self, gameScreen):
         # Create rows and columns
         for i in range(0, 15):
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), pygame.Rect(100+30*i, 100, 2, 422))
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), pygame.Rect(100, 100+30*i, 422, 2))
+        pygame.display.update()
+    
+    def drawWhoWins(self, gameScreen, winner):
+        backgroundRenderX, backgroundRenderY = 0, 274
+        backgroundWidth, backgroundHeight = 0, 72
+        for i in range(0, 621):
+            backgroundWidth += 1
+            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
+            pygame.display.update()
+        backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
+        youWin = pygame.font.SysFont(None, 60)
+        renderedYouWin = youWin.render(f"Player {winner} wins!", True, (255, 255, 255))
+        text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
+        gameScreen.blit(renderedYouWin, text_rect)
         pygame.display.update()
     
     def displayChess(self, gameScreen, pos, color):
@@ -86,7 +126,6 @@ class Admin:
     def endGame(self):
         # Pass board information to server and retrieve who wins and who loses
         print("Start examinging end game")
-        print(self.board)
         for i in range(self.len):
             for j in range(self.width):
                 if self.board[i][j] != 0:
@@ -144,14 +183,13 @@ class Board:
         pygame.display.update()
 
     def nowPlayerGlow(self, gameScreen):
-        colorWidth, colorHeight = 36, 36
-        tagWidth, tagHeight = 92, 36
+        colorWidth, colorHeight = 128, 36
+        tagWidth, tagHeight = 82, 26
         colorRenderX, colorRenderY = 32, 24
-        tagRenderX, tagRenderY = colorRenderX+colorWidth, colorRenderY
+        tagRenderX, tagRenderY = colorRenderX+23, colorRenderY+5
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
-        pygame.draw.rect(gameScreen, self.color, (colorRenderX, colorRenderY, colorWidth+tagWidth, colorHeight))
-        pygame.draw.rect(gameScreen, self.color, (colorRenderX+5, colorRenderY+5, colorWidth-10, colorHeight-10))
-        pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX+5, tagRenderY+5, tagWidth-10, tagHeight-10))
+        pygame.draw.rect(gameScreen, self.color, (colorRenderX, colorRenderY, colorWidth, colorHeight))
+        pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
         title = pygame.font.SysFont(None, 24)
         renderedTitle = title.render(f"Player {self.id}", True, (255, 255, 255))
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
@@ -159,8 +197,8 @@ class Board:
         pygame.display.update()
     
     def otherPlayerNoGlow(self, gameScreen):
-        colorWidth, colorHeight = 36, 36
-        tagWidth, tagHeight = 92, 36
+        colorWidth, colorHeight = 12, 36
+        tagWidth, tagHeight = 116, 36
         colorRenderX, colorRenderY = 32, 24
         tagRenderX, tagRenderY = colorRenderX+colorWidth, colorRenderY
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
@@ -171,7 +209,35 @@ class Board:
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
         gameScreen.blit(renderedTitle, text_rect)
         pygame.display.update()
-
+        
+    def drawYouWin(self, gameScreen):
+        backgroundRenderX, backgroundRenderY = 0, 274
+        backgroundWidth, backgroundHeight = 0, 72
+        for i in range(0, 621):
+            backgroundWidth += 1
+            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
+            pygame.display.update()
+        backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
+        youWin = pygame.font.SysFont(None, 60)
+        renderedYouWin = youWin.render("You win!", True, (255, 255, 255))
+        text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
+        gameScreen.blit(renderedYouWin, text_rect)
+        pygame.display.update()
+        
+    def drawYouLose(self, gameScreen):
+        backgroundRenderX, backgroundRenderY = 0, 274
+        backgroundWidth, backgroundHeight = 0, 72
+        for i in range(0, 621):
+            backgroundWidth += 1
+            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
+            pygame.display.update()
+        backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
+        youWin = pygame.font.SysFont(None, 60)
+        renderedYouWin = youWin.render("You lose!", True, (255, 255, 255))
+        text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
+        gameScreen.blit(renderedYouWin, text_rect)
+        pygame.display.update()
+        
     def displayChess(self, gameScreen, pos, color):
         # Adjust location if you put the chess outside the board
         if pos[0] >= 85 and pos [0] < 535 and pos[1] >= 85 and pos[1] < 535:
