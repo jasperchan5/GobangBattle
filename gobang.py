@@ -48,7 +48,7 @@ class Admin:
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
         pygame.draw.rect(gameScreen, thisPlayerColor, (colorRenderX, colorRenderY, colorWidth, colorHeight))
         pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
-        title = pygame.font.SysFont(None, 24)
+        title = pygame.font.Font(None, 24)
         renderedTitle = title.render(f"Player {thisPlayerID}", True, (255, 255, 255))
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
         gameScreen.blit(renderedTitle, text_rect)
@@ -62,7 +62,7 @@ class Admin:
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
         pygame.draw.rect(gameScreen, thisPlayerColor, (colorRenderX, colorRenderY, colorWidth, colorHeight))
         pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
-        title = pygame.font.SysFont(None, 24)
+        title = pygame.font.Font(None, 24)
         renderedTitle = title.render(f"Player {thisPlayerID}", True, (255, 255, 255))
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
         gameScreen.blit(renderedTitle, text_rect)
@@ -84,7 +84,7 @@ class Admin:
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
             pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
-        youWin = pygame.font.SysFont(None, 60)
+        youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render(f"Player {winner} wins!", True, (255, 255, 255))
         text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
         gameScreen.blit(renderedYouWin, text_rect)
@@ -190,7 +190,7 @@ class Board:
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
         pygame.draw.rect(gameScreen, self.color, (colorRenderX, colorRenderY, colorWidth, colorHeight))
         pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
-        title = pygame.font.SysFont(None, 24)
+        title = pygame.font.Font(None, 24)
         renderedTitle = title.render(f"Player {self.id}", True, (255, 255, 255))
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
         gameScreen.blit(renderedTitle, text_rect)
@@ -204,7 +204,7 @@ class Board:
         tagRenderXCenter, tagRenderYCenter = tagRenderX+0.5*tagWidth, tagRenderY+0.5*tagHeight
         pygame.draw.rect(gameScreen, self.color, (colorRenderX, colorRenderY, colorWidth, colorHeight))
         pygame.draw.rect(gameScreen, (0, 0, 0), (tagRenderX, tagRenderY, tagWidth, tagHeight))
-        title = pygame.font.SysFont(None, 24)
+        title = pygame.font.Font(None, 24)
         renderedTitle = title.render(f"Player {self.id}", True, (255, 255, 255))
         text_rect = renderedTitle.get_rect(center=(tagRenderXCenter, tagRenderYCenter))
         gameScreen.blit(renderedTitle, text_rect)
@@ -218,7 +218,7 @@ class Board:
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
             pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
-        youWin = pygame.font.SysFont(None, 60)
+        youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render("You win!", True, (255, 255, 255))
         text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
         gameScreen.blit(renderedYouWin, text_rect)
@@ -232,7 +232,7 @@ class Board:
             pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
             pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
-        youWin = pygame.font.SysFont(None, 60)
+        youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render("You lose!", True, (255, 255, 255))
         text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
         gameScreen.blit(renderedYouWin, text_rect)
