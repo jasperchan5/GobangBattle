@@ -78,11 +78,9 @@ class Admin:
     
     def drawWhoWins(self, gameScreen, winner):
         backgroundRenderX, backgroundRenderY = 0, 274
-        backgroundWidth, backgroundHeight = 0, 72
-        for i in range(0, 621):
-            backgroundWidth += 1
-            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
-            pygame.display.update()
+        backgroundWidth, backgroundHeight = 620, 72
+        pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
+        pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
         youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render(f"Player {winner} wins!", True, (255, 255, 255))
@@ -212,11 +210,9 @@ class Board:
         
     def drawYouWin(self, gameScreen):
         backgroundRenderX, backgroundRenderY = 0, 274
-        backgroundWidth, backgroundHeight = 0, 72
-        for i in range(0, 621):
-            backgroundWidth += 1
-            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
-            pygame.display.update()
+        backgroundWidth, backgroundHeight = 620, 72
+        pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
+        pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
         youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render("You win!", True, (255, 255, 255), pygame.SRCALPHA)
@@ -226,11 +222,9 @@ class Board:
         
     def drawYouLose(self, gameScreen):
         backgroundRenderX, backgroundRenderY = 0, 274
-        backgroundWidth, backgroundHeight = 0, 72
-        for i in range(0, 621):
-            backgroundWidth += 1
-            pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth+i, backgroundHeight))
-            pygame.display.update()
+        backgroundWidth, backgroundHeight = 620, 72
+        pygame.draw.rect(gameScreen, (0, 0, 0, 0.5), (backgroundRenderX, backgroundRenderY, backgroundWidth, backgroundHeight))
+        pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
         youWin = pygame.font.Font(None, 60)
         renderedYouWin = youWin.render("You lose!", True, (255, 255, 255))
