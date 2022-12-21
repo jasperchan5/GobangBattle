@@ -83,7 +83,7 @@ class Admin:
         pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
         youWin = pygame.font.Font(None, 60)
-        renderedYouWin = youWin.render(f"Player {winner} wins!", True, (255, 255, 255))
+        renderedYouWin = youWin.render(f"Player {winner} wins!", True, (255, 255, 255), pygame.SRCALPHA)
         text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
         gameScreen.blit(renderedYouWin, text_rect)
         pygame.display.update()
@@ -227,7 +227,7 @@ class Board:
         pygame.display.update()
         backgroundRenderXCenter, backgroundRenderYCenter = backgroundRenderX+0.5*backgroundWidth, backgroundRenderY+0.5*backgroundHeight
         youWin = pygame.font.Font(None, 60)
-        renderedYouWin = youWin.render("You lose!", True, (255, 255, 255))
+        renderedYouWin = youWin.render("You lose!", True, (255, 255, 255), pygame.SRCALPHA)
         text_rect = renderedYouWin.get_rect(center=(backgroundRenderXCenter, backgroundRenderYCenter))
         gameScreen.blit(renderedYouWin, text_rect)
         pygame.display.update()

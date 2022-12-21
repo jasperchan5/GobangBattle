@@ -10,8 +10,8 @@ import random
 class Server:
     def __init__(self, admin, screen, playerCnt, color_list):
         self.ServerSideSocket = socket.socket()
-        self.host = '172.20.10.2'
-        self.port = 2004
+        self.host = '172.20.10.8'
+        self.port = 2003
         self.ThreadCount = 0
         self.nowPlayer = 0
         self.Finish = False
