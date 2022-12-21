@@ -11,7 +11,7 @@ class Server:
     def __init__(self, admin, screen, playerCnt, color_list):
         self.ServerSideSocket = socket.socket()
         self.host = '172.20.10.3'
-        self.port = 2004
+        self.port = 2003
         self.ThreadCount = 0
         self.nowPlayer = 0
         self.Finish = False
@@ -123,7 +123,7 @@ class Server:
             connection.send(str.encode("you_lose"))
 
 def main():
-    playerCnt = 4
+    playerCnt = 2
     color_list = [
         "#85332d", "#ff7b24", "#ff201c", "#f0ec1f", "#63cc43", "#357bb8", "#35b8ab", "#9530c7", "#cf19b6", "#cf1958"
     ]
