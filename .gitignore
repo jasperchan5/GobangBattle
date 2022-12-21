@@ -1,3 +1,4 @@
 /dist
 /gobang_exe
 /build
+/__pycache__
